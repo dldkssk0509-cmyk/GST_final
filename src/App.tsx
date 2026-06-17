@@ -82,6 +82,9 @@ function SequenceItem({
 }
 
 function Header() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileAboutOpen, setIsMobileAboutOpen] = useState(false);
+
   return (
     <header className="absolute left-0 top-0 z-30 w-full px-[clamp(24px,3.2vw,46px)] py-6 text-white">
       <div className="mx-auto flex max-w-[1319px] items-center justify-between">
@@ -96,13 +99,15 @@ function Header() {
                 >
                   {item}
                 </a>
-                <div className="pointer-events-none absolute left-1/2 top-full w-[156px] -translate-x-1/2 translate-y-1 rounded-[3px] border border-white/12 bg-[#071721]/92 p-[6px] opacity-0 shadow-[0_18px_44px_rgba(0,0,0,0.34)] backdrop-blur-md transition-all duration-200 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:translate-y-0 group-focus-within:opacity-100">
+                <div className="pointer-events-none absolute left-1/2 top-full w-[214px] -translate-x-1/2 translate-y-2 rounded-[8px] border border-white/10 bg-[#06141d]/78 px-3 py-3 opacity-0 shadow-[0_24px_60px_rgba(0,0,0,0.42)] ring-1 ring-[#61a9ff]/10 backdrop-blur-xl transition-all duration-200 ease-out group-hover:pointer-events-auto group-hover:translate-y-1 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:translate-y-1 group-focus-within:opacity-100">
+                  <div className="absolute -top-2 left-1/2 h-4 w-4 -translate-x-1/2 rotate-45 border-l border-t border-white/10 bg-[#06141d]/78 backdrop-blur-xl" />
                   {aboutMenuItems.map((menuItem) => (
                     <a
                       key={menuItem.label}
                       href={menuItem.href}
-                      className="mb-[5px] flex h-[43px] items-center justify-center rounded-[2px] bg-[#5d99f1] px-3 text-center text-[14px] font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.16)] transition-colors last:mb-0 hover:bg-[#2f7fe8] focus-visible:bg-[#2f7fe8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
+                      className="group/item relative flex min-h-[38px] items-center border-b border-white/[0.07] px-2 text-[14px] font-medium text-white/78 transition-all duration-200 last:border-b-0 hover:translate-x-1 hover:text-white focus-visible:translate-x-1 focus-visible:text-white focus-visible:outline-none"
                     >
+                      <span className="mr-3 h-px w-4 bg-white/18 transition-all duration-200 group-hover/item:w-6 group-hover/item:bg-[#6eb2ff] group-focus-visible/item:w-6 group-focus-visible/item:bg-[#6eb2ff]" />
                       {menuItem.label}
                     </a>
                   ))}
@@ -115,9 +120,60 @@ function Header() {
             ),
           )}
         </nav>
-        <button aria-label="menu" className="grid size-8 place-items-center text-white transition-opacity hover:opacity-70">
+        <button
+          aria-label="menu"
+          aria-expanded={isMobileMenuOpen}
+          onClick={() => setIsMobileMenuOpen((open) => !open)}
+          className="grid size-8 place-items-center text-white transition-opacity hover:opacity-70"
+        >
           <Menu size={31} strokeWidth={1.8} />
         </button>
+      </div>
+      <div
+        className={`absolute left-[clamp(24px,3.2vw,46px)] right-[clamp(24px,3.2vw,46px)] top-[calc(100%-10px)] overflow-hidden rounded-[10px] border border-white/10 bg-[#06141d]/82 shadow-[0_24px_60px_rgba(0,0,0,0.42)] ring-1 ring-[#61a9ff]/10 backdrop-blur-xl transition-all duration-200 lg:hidden ${
+          isMobileMenuOpen ? "max-h-[520px] opacity-100" : "pointer-events-none max-h-0 opacity-0"
+        }`}
+      >
+        <nav className="px-4 py-3 text-[15px] font-medium uppercase tracking-[0px]">
+          {navItems.map((item) =>
+            item === "ABOUT" ? (
+              <div key={item} className="border-b border-white/[0.07]">
+                <button
+                  type="button"
+                  aria-expanded={isMobileAboutOpen}
+                  onClick={() => setIsMobileAboutOpen((open) => !open)}
+                  className="flex w-full items-center justify-between py-3 text-left text-white transition-colors hover:text-[#8dc4ff]"
+                >
+                  <span>{item}</span>
+                  <span className={`text-[18px] leading-none transition-transform duration-200 ${isMobileAboutOpen ? "rotate-45 text-[#8dc4ff]" : ""}`}>+</span>
+                </button>
+                <div className={`overflow-hidden transition-all duration-200 ${isMobileAboutOpen ? "max-h-[280px] pb-3" : "max-h-0"}`}>
+                  <div className="space-y-1 border-l border-[#6eb2ff]/35 pl-4">
+                    {aboutMenuItems.map((menuItem) => (
+                      <a
+                        key={menuItem.label}
+                        href={menuItem.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="block py-2 text-[14px] normal-case text-white/70 transition-all duration-200 hover:translate-x-1 hover:text-white"
+                      >
+                        {menuItem.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <a
+                key={item}
+                href={`#${item.toLowerCase().replace("&", "and")}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block border-b border-white/[0.07] py-3 transition-colors last:border-b-0 hover:text-[#8dc4ff]"
+              >
+                {item}
+              </a>
+            ),
+          )}
+        </nav>
       </div>
     </header>
   );
